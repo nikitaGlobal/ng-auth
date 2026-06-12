@@ -16,6 +16,63 @@
     margin-top: 0;
 }
 
+.ng-auth-container {
+    max-width: 480px;
+    margin: 80px auto;
+    padding: 32px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ng-auth-container h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+}
+
+.ng-auth-container p {
+    margin: 0 0 24px;
+    color: #666;
+}
+
+.ng-auth-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.ng-auth-btn:hover {
+    background: #135e96;
+}
+
+.ng-auth-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.ng-auth-btn-secondary {
+    background: #fff;
+    color: #2271b1;
+    border: 1px solid #2271b1;
+}
+
+.ng-auth-btn-secondary:hover {
+    background: #f0f6fc;
+}
+
+.ng-auth-btn-secondary:disabled {
+    background: #f9fafb;
+    color: #999;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
 .ng-auth-admin-stats {
     display: flex;
     gap: 16px;

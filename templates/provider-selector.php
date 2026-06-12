@@ -6,6 +6,7 @@
  * @var WP_User                      $user
  * @var string                       $base_url
  * @var string                       $token
+ * @var string                       $cancel_url
  */
 
 if (!defined('ABSPATH')) {
@@ -13,6 +14,7 @@ if (!defined('ABSPATH')) {
 }
 
 $user_id = $user->ID;
+$cancel_url = $cancel_url ?? wp_login_url();
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -22,16 +24,6 @@ $user_id = $user->ID;
     <title><?php esc_html_e('Выберите способ подтверждения', 'ng-auth'); ?> — <?php bloginfo('name'); ?></title>
     <?php wp_head(); ?>
     <style>
-        .ng-auth-container {
-            max-width: 480px;
-            margin: 80px auto;
-            padding: 32px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-        }
-        .ng-auth-container h2 { margin: 0 0 8px; font-size: 22px; }
-        .ng-auth-container p { margin: 0 0 24px; color: #666; }
         .ng-auth-provider-card {
             display: block;
             padding: 20px;
@@ -67,7 +59,24 @@ $user_id = $user->ID;
             </a>
         <?php endforeach; ?>
     <?php endif; ?>
+
+    <button type="button" class="ng-auth-btn ng-auth-btn-secondary" id="ng-auth-cancel-btn" style="margin-top: 16px;">
+        <?php esc_html_e('Отменить', 'ng-auth'); ?>
+    </button>
 </div>
+
+<script>
+(function() {
+    'use strict';
+    var cancelUrl = <?php echo wp_json_encode($cancel_url); ?>;
+    var cancelBtn = document.getElementById('ng-auth-cancel-btn');
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            window.location.href = cancelUrl;
+        });
+    }
+})();
+</script>
 
 <?php wp_footer(); ?>
 </body>

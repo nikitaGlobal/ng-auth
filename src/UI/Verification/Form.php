@@ -265,12 +265,14 @@ class NG_Auth_UI_Verification_Form
     {
         $slug = apply_filters('ng_auth_verify_slug', NG_AUTH_VERIFY_SLUG);
         $token = isset($_GET['token']) ? sanitize_text_field(wp_unslash($_GET['token'])) : '';
+        $cancel_url = wp_get_referer() ?: wp_login_url();
 
         $this->load_template('provider-selector.php', [
             'providers' => $providers,
             'user' => $user,
             'base_url' => home_url("/{$slug}/"),
             'token' => $token,
+            'cancel_url' => $cancel_url,
         ]);
     }
 

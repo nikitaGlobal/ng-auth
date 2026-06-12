@@ -34,20 +34,12 @@ $test_otp_code = $test_otp_code ?? '';
     <title><?php esc_html_e('Подтверждение личности', 'ng-auth'); ?> — <?php bloginfo('name'); ?></title>
     <?php wp_head(); ?>
     <style>
-        .ng-auth-container { max-width: 480px; margin: 80px auto; padding: 32px; background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
-        .ng-auth-container h2 { margin: 0 0 8px; font-size: 22px; }
-        .ng-auth-container p { margin: 0 0 16px; color: #666; }
+        .ng-auth-container p { margin: 0 0 16px; }
         .ng-auth-field { margin-bottom: 16px; }
         .ng-auth-field label { display: block; margin-bottom: 4px; font-weight: 600; }
         .ng-auth-field input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
         .ng-auth-field input[readonly] { background: #f9fafb; color: #666; }
         .ng-auth-field input:focus { border-color: #2271b1; outline: none; box-shadow: 0 0 0 1px #2271b1; }
-        .ng-auth-btn { display: block; width: 100%; padding: 12px; background: #2271b1; color: #fff; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
-        .ng-auth-btn:hover { background: #135e96; }
-        .ng-auth-btn:disabled { background: #ccc; cursor: not-allowed; }
-        .ng-auth-btn-secondary { background: #fff; color: #2271b1; border: 1px solid #2271b1; }
-        .ng-auth-btn-secondary:hover { background: #f0f6fc; }
-        .ng-auth-btn-secondary:disabled { background: #f9fafb; color: #999; border-color: #ddd; cursor: not-allowed; }
         .ng-auth-error { padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; color: #dc2626; margin-bottom: 16px; display: none; }
         .ng-auth-success { padding: 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 4px; color: #16a34a; margin-bottom: 16px; display: none; }
         .ng-auth-back { display: block; margin-top: 16px; text-align: center; font-size: 14px; }
