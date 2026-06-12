@@ -220,6 +220,35 @@ class NG_Auth_Core_Plugin
     }
 
     /**
+     * Генерация URL страницы верификации.
+     *
+     * При красивых ссылках: /ng-auth-verify/
+     * При простых ссылках: /?ng_auth_verify=1
+     *
+     * @param array $extra_query Дополнительные query-параметры.
+     * @return string Полный URL.
+     */
+    public function get_verify_url(array $extra_query = []): string
+    {
+        $structure = get_option('permalink_structure');
+        $slug = apply_filters('ng_auth_verify_slug', NG_AUTH_VERIFY_SLUG);
+
+        if ('' === $structure) {
+            // Простые ссылки
+            $base = home_url('/');
+            $extra_query['ng_auth_verify'] = '1';
+            return add_query_arg($extra_query, $base);
+        }
+
+        // Красивые ссылки
+        $url = home_url("/{$slug}/");
+        if (!empty($extra_query)) {
+            $url = add_query_arg($extra_query, $url);
+        }
+        return $url;
+    }
+
+    /**
      * Добавление кастомных query-переменных.
      *
      * @param string[] $vars Массив зарегистрированных query-переменных.
@@ -235,14 +264,18 @@ class NG_Auth_Core_Plugin
     /**
      * Обработка запроса к странице верификации.
      *
-     * Если query-переменная ng_auth_verify равна 1, вызывает хук
-     * ng_auth_verify_page и завершает выполнение.
+     * Срабатывает:
+     * - При красивых ссылках: /ng-auth-verify/ → query_var ng_auth_verify=1
+     * - При простых ссылках: ?ng_auth_verify=1 → проверка $_GET
      *
      * @return void
      */
     public function handle_verify_page(): void
     {
-        if ((int) get_query_var('ng_auth_verify') === 1) {
+        $is_verify = (int) get_query_var('ng_auth_verify') === 1
+            || (isset($_GET['ng_auth_verify']) && '1' === $_GET['ng_auth_verify']);
+
+        if ($is_verify) {
             do_action('ng_auth_verify_page');
             exit;
         }

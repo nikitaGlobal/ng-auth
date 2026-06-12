@@ -107,6 +107,20 @@ define('NG_AUTH_LOG_TABLE', 'ng_auth_verification_log');
 require_once NG_AUTH_DIR . 'autoload.php';
 
 /**
+ * Генерация URL страницы верификации.
+ *
+ * При красивых ссылках: /ng-auth-verify/
+ * При простых ссылках: /?ng_auth_verify=1
+ *
+ * @param array $extra_query Дополнительные query-параметры.
+ * @return string Полный URL.
+ */
+function ng_auth_verify_url(array $extra_query = []): string
+{
+    return NG_Auth_Core_Plugin::instance()->get_verify_url($extra_query);
+}
+
+/**
  * Инициализация плагина на хуке plugins_loaded.
  *
  * @see NG_Auth_Core_Plugin::init()
