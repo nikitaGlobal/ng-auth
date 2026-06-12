@@ -1,0 +1,135 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: NG Auth 1.0.0\n"
+"Report-Msgid-Bugs-To: https://nikita.global\n"
+"POT-Creation-Date: 2026-06-11 16:00+0300\n"
+"PO-Revision-Date: 2026-06-11 16:00+0300\n"
+"Last-Translator: Nikita Menshutin <info@nikita.global>\n"
+"Language-Team: Russian\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: NG Auth\n"
+"X-Domain: ng-auth\n"
+
+#: ng-auth.php
+msgid "NG Auth"
+msgstr ""
+
+#: src/Core/Authentication/Handler.php
+msgid "Ваша учётная запись заблокирована. Обратитесь к администратору."
+msgstr ""
+
+#: src/Providers/SMS.php
+msgid "Номер телефона не указан."
+msgstr ""
+
+#: src/Providers/SMS.php
+msgid "Подождите перед повторной отправкой кода."
+msgstr ""
+
+#: src/Providers/SMS.php
+msgid "Не удалось отправить SMS. Попробуйте позже."
+msgstr ""
+
+#: src/Providers/SMS.php
+msgid "Код подтверждения отправлен на ваш номер телефона."
+msgstr ""
+
+#: src/Providers/SMS.php
+msgid "Введите код подтверждения."
+msgstr ""
+
+#: src/Providers/SMS.php
+msgid "Подтверждение успешно пройдено."
+msgstr ""
+
+#: src/Providers/SMS.php
+msgid "Превышено число попыток. Аккаунт заблокирован."
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Общие настройки"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Включить обязательное подтверждение"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Роли с обязательным подтверждением"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Доменные зоны почты (через запятую, напр.: @.ru, @.рф)"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Режим для новых пользователей"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Soft — пользователь создаётся, доступ ограничен"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Hard — пользователь не создаётся до подтверждения"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "OTP-настройки"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Длина кода"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Время жизни кода (сек)"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Максимальное число попыток"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Интервал повторной отправки (сек)"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Шаблоны сообщений"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "SMS OTP-шаблон"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "SMS напоминание"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Тема Email-напоминания"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Тело Email-напоминания (HTML)"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Рассылка напоминаний"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Включить рассылку"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Задержка первого напоминания (дни)"
+msgstr ""
+
+#: src/Admin/Settings/Page.php
+msgid "Размер батча"
+msgstr ""
