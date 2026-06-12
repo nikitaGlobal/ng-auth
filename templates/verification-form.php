@@ -7,7 +7,6 @@
  * @var int                               $attempts
  * @var int                               $max_attempts
  * @var int                               $ttl
- * @var NG_Auth_Contracts_Provider[]      $providers
  * @var string                            $phone_locked
  * @var string                            $test_otp_code
  */
@@ -123,13 +122,6 @@ $test_otp_code = $test_otp_code ?? '';
             </div>
         </div>
     </form>
-
-    <?php if (1 < count($providers)): ?>
-        <a href="<?php echo esc_url(home_url("/{$slug}/?token={$token}&user_id={$user_id}")); ?>"
-           class="ng-auth-back">
-            <?php esc_html_e('← Выбрать другой способ', 'ng-auth'); ?>
-        </a>
-    <?php endif; ?>
 </div>
 
 <script>
@@ -145,7 +137,7 @@ $test_otp_code = $test_otp_code ?? '';
         ajaxUrl: <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>,
         otpSent: <?php echo $otp_sent ? 'true' : 'false'; ?>,
         cancelUrl: <?php echo wp_json_encode(wp_get_referer() ?: wp_login_url()); ?>,
-        providerSelectUrl: <?php echo wp_json_encode(home_url("/{$slug}/?token={$token}&user_id={$user_id}")); ?>
+
     };
 
     function $(id) { return document.getElementById(id); }

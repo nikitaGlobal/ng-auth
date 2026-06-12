@@ -130,11 +130,7 @@ class NG_Auth_UI_Verification_Form
             $slug = apply_filters('ng_auth_verify_slug', NG_AUTH_VERIFY_SLUG);
             $token = isset($_GET['token']) ? sanitize_text_field(wp_unslash($_GET['token'])) : '';
             $user_id = isset($_GET['user_id']) ? (int) $_GET['user_id'] : $user->ID;
-            wp_safe_redirect(add_query_arg([
-                'provider' => $single->get_id(),
-                'token' => urlencode($token),
-                'user_id' => $user_id,
-            ], home_url("/{$slug}/")));
+            wp_safe_redirect(home_url("/{$slug}/?provider=" . urlencode($single->get_id()) . '&token=' . urlencode($token) . '&user_id=' . $user_id));
             exit;
         }
 
@@ -144,12 +140,12 @@ class NG_Auth_UI_Verification_Form
         }
 
         if ($provider && $provider instanceof NG_Auth_Providers_SMS) {
-            $this->render_sms_form($provider, $user, $available);
+            $this->render_sms_form($provider, $user);
             return;
         }
 
         if ($provider && $provider instanceof NG_Auth_Providers_ESIA) {
-            $this->render_esia_button($provider, $user, $available);
+            $this->render_esia_button($provider, $user);
             return;
         }
 
@@ -261,8 +257,8 @@ class NG_Auth_UI_Verification_Form
     /**
      * Отрисовка страницы выбора провайдера верификации.
      *
-     * @param WP_User                        $user      Пользователь.
-     * @param NG_Auth_Contracts_Provider[]   $providers Доступные провайдеры.
+     * @param WP_User                      $user      Пользователь.
+     * @param NG_Auth_Contracts_Provider[] $providers Доступные провайдеры.
      * @return void
      */
     private function render_provider_selection(WP_User $user, array $providers): void
@@ -281,12 +277,11 @@ class NG_Auth_UI_Verification_Form
     /**
      * Отрисовка формы ввода SMS-кода.
      *
-     * @param NG_Auth_Providers_SMS          $provider  SMS-провайдер.
-     * @param WP_User                        $user      Пользователь.
-     * @param NG_Auth_Contracts_Provider[]   $providers Все доступные провайдеры.
+     * @param NG_Auth_Providers_SMS $provider SMS-провайдер.
+     * @param WP_User               $user     Пользователь.
      * @return void
      */
-    private function render_sms_form(NG_Auth_Providers_SMS $provider, WP_User $user, array $providers): void
+    private function render_sms_form(NG_Auth_Providers_SMS $provider, WP_User $user): void
     {
         $attempts = $this->storage->get_otp_attempts($user);
         $ttl = $this->storage->get_otp_ttl($user);
@@ -304,17 +299,12 @@ class NG_Auth_UI_Verification_Form
             }
         }
 
-        // В тестовом режиме показываем OTP-код из последнего лога.
+        // В тестовом режиме показываем OTP-код напрямую из user_meta.
         $test_otp_code = '';
         if (0 < $attempts && $provider->is_test_mode()) {
-            $log = $this->storage->get_verification_log($user->ID, 5);
-            foreach ($log as $entry) {
-                if ('test_otp' === $entry['action'] && 'pending' === $entry['status']) {
-                    if (preg_match('/Тестовый код: (\d{4,6})/', $entry['message'], $m)) {
-                        $test_otp_code = $m[1];
-                        break;
-                    }
-                }
+            $code = get_user_meta($user->ID, 'ng_auth_otp_last_plain', true);
+            if ('' !== $code) {
+                $test_otp_code = $code;
             }
         }
 
@@ -324,7 +314,6 @@ class NG_Auth_UI_Verification_Form
             'attempts' => $attempts,
             'max_attempts' => $max_attempts,
             'ttl' => $ttl,
-            'providers' => $providers,
             'phone_locked' => $phone_locked,
             'test_otp_code' => $test_otp_code,
         ]);
@@ -335,12 +324,11 @@ class NG_Auth_UI_Verification_Form
      *
      * Инициирует OAuth-процесс и перенаправляет пользователя на портал ЕСИА.
      *
-     * @param NG_Auth_Providers_ESIA         $provider  Провайдер ЕСИА.
-     * @param WP_User                        $user      Пользователь.
-     * @param NG_Auth_Contracts_Provider[]   $providers Все доступные провайдеры.
+     * @param NG_Auth_Providers_ESIA $provider Провайдер ЕСИА.
+     * @param WP_User                $user     Пользователь.
      * @return void
      */
-    private function render_esia_button(NG_Auth_Providers_ESIA $provider, WP_User $user, array $providers): void
+    private function render_esia_button(NG_Auth_Providers_ESIA $provider, WP_User $user): void
     {
         $result = $provider->initiate_verification($user);
         if ('' !== $result->get_redirect_url()) {
@@ -352,7 +340,6 @@ class NG_Auth_UI_Verification_Form
             'provider' => $provider,
             'user' => $user,
             'error' => $result->get_message(),
-            'providers' => $providers,
         ]);
     }
 
@@ -462,12 +449,9 @@ class NG_Auth_UI_Verification_Form
 
             // В тестовом режиме — возвращаем OTP-код клиенту для автозаполнения.
             if ($result->is_success() && $provider->is_test_mode()) {
-                $log = $this->storage->get_verification_log($user->ID, 3);
-                foreach ($log as $entry) {
-                    if ('test_otp' === $entry['action'] && preg_match('/(\d{4,6})/', $entry['message'], $m)) {
-                        $response['code'] = $m[1];
-                        break;
-                    }
+                $code = get_user_meta($user->ID, 'ng_auth_otp_last_plain', true);
+                if ('' !== $code) {
+                    $response['code'] = $code;
                 }
             }
 

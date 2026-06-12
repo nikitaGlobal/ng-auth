@@ -81,7 +81,7 @@ define('NG_AUTH_STATUS_BLOCKED', 'blocked');
  *
  * @var string
  */
-define('NG_AUTH_VERIFY_SLUG', 'verify');
+define('NG_AUTH_VERIFY_SLUG', 'ng-auth-verify');
 
 /**
  * Префикс настроек плагина.

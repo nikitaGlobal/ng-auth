@@ -62,20 +62,11 @@ class NG_Auth_Providers_SmsAero extends NG_Auth_Providers_SMS
             'required' => true,
         ];
 
-        // Удаляем api_secret — SMS Aero его не использует.
-        unset($fields["{$prefix}_api_secret"]);
-
         // Добавляем специфичные поля SMS Aero.
         $fields["{$prefix}_sign"] = [
             'label' => __('Подпись отправителя', 'ng-auth'),
             'type' => 'text',
             'default' => $settings["{$prefix}_sign"] ?? 'SMS Aero',
-        ];
-
-        $fields["{$prefix}_test_mode"] = [
-            'label' => __('Режим тестирования', 'ng-auth'),
-            'type' => 'checkbox',
-            'default' => false,
         ];
 
         return $fields;

@@ -96,6 +96,40 @@ class NG_Auth_Core_Authentication_Handler
             );
         }
 
+        // Проверяем локаут email/телефона (transient-блокировка после превышения попыток OTP)
+        $lockout = new NG_Auth_Core_Lockout_Service();
+        if ($lockout->is_email_locked($user->user_email)) {
+            $remaining = $lockout->email_lock_remaining($user->user_email);
+            NG_Auth_Log_Logger::warning('Locked-out user attempted login', [
+                'user_id' => $user->ID,
+                'email' => $user->user_email,
+                'remaining' => $remaining,
+            ]);
+            return new WP_Error(
+                'ng_auth_locked_out',
+                sprintf(
+                    __('Превышено число попыток. Email и телефон заблокированы. Попробуйте через %d мин.', 'ng-auth'),
+                    (int) ceil($remaining / 60)
+                )
+            );
+        }
+
+        $phone_raw = get_user_meta($user->ID, 'ng_auth_phone_raw', true);
+        if ('' !== $phone_raw && $lockout->is_phone_locked($phone_raw)) {
+            $remaining = $lockout->phone_lock_remaining($phone_raw);
+            NG_Auth_Log_Logger::warning('Locked-out user attempted login (phone)', [
+                'user_id' => $user->ID,
+                'remaining' => $remaining,
+            ]);
+            return new WP_Error(
+                'ng_auth_locked_out',
+                sprintf(
+                    __('Превышено число попыток. Email и телефон заблокированы. Попробуйте через %d мин.', 'ng-auth'),
+                    (int) ceil($remaining / 60)
+                )
+            );
+        }
+
         return $user;
     }
 

@@ -81,6 +81,8 @@ abstract class NG_Auth_Providers_SMS extends NG_Auth_Providers_Base
                 'pending',
                 sprintf(__('Тестовый код: %s', 'ng-auth'), $otp)
             );
+            // Сохраняем plain-код для автозаполнения на фронтенде.
+            update_user_meta($user->ID, 'ng_auth_otp_last_plain', $otp);
         }
 
         $settings = get_option('ng_auth_settings', []);
@@ -236,6 +238,11 @@ abstract class NG_Auth_Providers_SMS extends NG_Auth_Providers_Base
                 'label' => __('Имя отправителя', 'ng-auth'),
                 'type' => 'text',
                 'default' => $settings["{$prefix}_sender_name"] ?? 'NG.Auth',
+            ],
+            "{$prefix}_test_mode" => [
+                'label' => __('Режим тестирования', 'ng-auth'),
+                'type' => 'checkbox',
+                'default' => false,
             ],
             "{$prefix}_priority" => [
                 'label' => __('Приоритет', 'ng-auth'),

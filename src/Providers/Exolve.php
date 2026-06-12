@@ -87,10 +87,21 @@ class NG_Auth_Providers_Exolve extends NG_Auth_Providers_SMS
         $prefix = 'provider_' . $this->get_id();
         $settings = get_option('ng_auth_settings', []);
 
+        // Переопределяем sender_name как обязательное поле отправителя.
+        unset($fields["{$prefix}_sender_name"]);
+
+        $fields["{$prefix}_alpha_name"] = [
+            'label' => __('Альфа-имя или номер отправителя', 'ng-auth'),
+            'type' => 'text',
+            'default' => $settings["{$prefix}_alpha_name"] ?? '',
+            'required' => true,
+            'description' => __('Зарегистрированное альфа-имя или купленный номер в личном кабинете МТС Exolve.', 'ng-auth'),
+        ];
+
         $fields["{$prefix}_endpoint"] = [
             'label' => __('Endpoint URL', 'ng-auth'),
             'type' => 'readonly',
-            'default' => $settings["{$prefix}_endpoint"] ?? 'https://api.exolve.com/v1/sms/send',
+            'default' => $settings["{$prefix}_endpoint"] ?? 'https://api.exolve.ru/messaging/v1/SendSMS',
         ];
 
         return $fields;
@@ -99,7 +110,10 @@ class NG_Auth_Providers_Exolve extends NG_Auth_Providers_SMS
     /**
      * Отправка SMS через API МТС Exolve.
      *
-     * Использует Bearer-аутентификацию и JSON-формат запроса.
+     * Документация: https://docs.exolve.ru/docs/ru/api-reference/sms-api/sending-sms/
+     * Эндпоинт: POST https://api.exolve.ru/messaging/v1/SendSMS
+     * Авторизация: Bearer {api_key}
+     * Параметры: number (отправитель), destination (получатель), text (сообщение)
      *
      * @param string $phone   Номер телефона получателя.
      * @param string $message Текст сообщения.
@@ -107,36 +121,65 @@ class NG_Auth_Providers_Exolve extends NG_Auth_Providers_SMS
      */
     protected function send_sms(string $phone, string $message): bool
     {
-        $api_key = $this->get_option('api_key');
-        $api_secret = $this->get_option('api_secret');
-        $endpoint = $this->get_option('endpoint', 'https://api.exolve.com/v1/sms/send');
-        $sender = $this->get_option('sender_name', 'NG.Auth');
+        $test_mode = (bool) ($this->get_option('test_mode', false));
 
-        if ('' === $api_key || '' === $api_secret) {
-            NG_Auth_Log_Logger::warning('Exolve: API credentials not configured');
+        if ($test_mode) {
+            NG_Auth_Log_Logger::info('Exolve test mode: skipping real send', [
+                'phone' => $phone,
+                'message' => $message,
+            ]);
+            return true;
+        }
+
+        $api_key = $this->get_option('api_key');
+        $endpoint = $this->get_option('endpoint', 'https://api.exolve.ru/messaging/v1/SendSMS');
+        $sender = $this->get_option('alpha_name', '');
+
+        // Приводим номер к чистому формату (без +, скобок, пробелов).
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        // Если sender — номер, чистим; альфа-имя оставляем как есть.
+        if (preg_match('/^\+?[0-9]/', $sender)) {
+            $sender = preg_replace('/[^0-9]/', '', $sender);
+        }
+
+        if ('' === $api_key) {
+            NG_Auth_Log_Logger::warning('Exolve: API key not configured');
+            return false;
+        }
+
+        if ('' === $sender) {
+            NG_Auth_Log_Logger::warning('Exolve: alpha name not configured');
             return false;
         }
 
         $http = new NG_Auth_Http_Client(10);
         $response = $http->post_json($endpoint, [
-            'from' => $sender,
-            'to' => $phone,
+            'number' => $sender,
+            'destination' => $phone,
             'text' => $message,
         ], [
             'Authorization' => 'Bearer ' . $api_key,
         ]);
 
         if (is_wp_error($response)) {
+            NG_Auth_Log_Logger::error('Exolve HTTP request failed', [
+                'error' => $response->get_error_message(),
+            ]);
             return false;
         }
 
         $data = json_decode($response['body'], true);
-        $success = $response['code'] === 200 && empty($data['error']);
+        $success = $response['code'] === 200 && is_array($data) && !empty($data['message_id']);
 
-        if (!$success) {
+        if ($success) {
+            NG_Auth_Log_Logger::info('Exolve SMS sent OK', [
+                'message_id' => $data['message_id'] ?? 'unknown',
+                'phone' => $phone,
+            ]);
+        } else {
             NG_Auth_Log_Logger::warning('Exolve SMS failed', [
-                'code' => $response['code'],
-                'body' => substr($response['body'], 0, 300),
+                'http_code' => $response['code'],
+                'body' => substr($response['body'], 0, 500),
             ]);
         }
 

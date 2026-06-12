@@ -83,3 +83,4 @@ if (!defined('ABSPATH')) {
     update();
 })();
 </script>
+<?php endif; ?>

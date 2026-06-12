@@ -59,7 +59,7 @@ abstract class NG_Auth_Providers_Base implements NG_Auth_Contracts_Provider
      */
     public function get_priority(): int
     {
-        return NG_Auth_Config::instance()->get_provider($this->get_id(), 'priority', 10);
+        return (int) NG_Auth_Config::instance()->get_provider($this->get_id(), 'priority', 10);
     }
 
     /**

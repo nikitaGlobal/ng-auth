@@ -61,11 +61,7 @@ $user_id = $user->ID;
         <p><?php esc_html_e('Нет доступных способов подтверждения. Обратитесь к администратору.', 'ng-auth'); ?></p>
     <?php else: ?>
         <?php foreach ($providers as $provider): ?>
-            <a href="<?php echo esc_url(add_query_arg([
-                'provider' => $provider->get_id(),
-                'token' => $token,
-                'user_id' => $user_id,
-            ], $base_url)); ?>" class="ng-auth-provider-card">
+            <a href="<?php echo esc_attr($base_url . '?provider=' . urlencode($provider->get_id()) . '&token=' . urlencode($token) . '&user_id=' . (int) $user_id); ?>" class="ng-auth-provider-card">
                 <h3><?php echo esc_html($provider->get_name()); ?></h3>
                 <p><?php echo esc_html($provider->get_description()); ?></p>
             </a>
